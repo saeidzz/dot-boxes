@@ -1,0 +1,581 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>Ajhdar.java</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<style type="text/css">
+<!--
+body {color: #a9b7c6; background-color: #2b2b2b; font-family: Monospaced}
+pre {color: #a9b7c6; background-color: #2b2b2b; font-family: Monospaced}
+table {color: #888888; background-color: #313335; font-family: Monospaced}
+.number {color: #6897bb}
+.ST2 {color: #ffc66d}
+.ST3 {color: #ffc66d; font-family: Monospaced; font-style: italic}
+.comment {color: #808080}
+.ST0 {color: #9876aa}
+.character {color: #6a8759}
+.ST4 {font-family: Monospaced; font-style: italic}
+.ST1 {color: #9876aa; font-family: Monospaced; font-style: italic}
+.whitespace {color: #505050}
+.keyword-directive {color: #cc7832}
+-->
+</style>
+</head>
+<body>
+<table width="100%"><tr><td align="center">C:\Users\saeid\Documents\NetBeansProjects\ajhdar\src\ajhdar\Ajhdar.java</td></tr></table>
+<pre>
+  1 <span class="keyword-directive">import</span> java.awt.Dimension;
+  2 
+  3 <span class="keyword-directive">import</span> java.awt.Graphics;
+  4 <span class="keyword-directive">import</span> java.awt.Image;
+  5 <span class="keyword-directive">import</span> java.awt.Polygon;
+  6 <span class="keyword-directive">import</span> java.awt.Color;
+  7 
+  8 <span class="keyword-directive">import</span> java.awt.event.MouseListener;
+  9 <span class="keyword-directive">import</span> java.awt.event.MouseMotionListener;
+ 10 <span class="keyword-directive">import</span> java.awt.event.MouseEvent;
+ 11 
+ 12 <span class="keyword-directive">import</span> javax.swing.JFrame;
+ 13 <span class="keyword-directive">import</span> javax.swing.JOptionPane;
+ 14 
+ 15 <span class="keyword-directive">class</span> Sprite {
+ 16 
+ 17         <span class="comment">/*</span>
+ 18 <span class="comment">         *      </span>
+ 19 <span class="comment">         *      Sprite is the basic object that is drawn onto the screen. The dots </span>
+ 20 <span class="comment">         *      are all Sprite objects. ConnectionSprite and BoxSprite are subclasses</span>
+ 21 <span class="comment">         *      of Sprite. Sprite has a method check to see if a point is within</span>
+ 22 <span class="comment">         *      the drawn object. Sprite also has method to draw the Sprite to the screen.       </span>
+ 23 <span class="comment">         *</span>
+ 24 <span class="comment">         */</span>
+ 25 
+ 26     Polygon <span class="ST0">shape</span>;      <span class="comment">//      shape that shown in the screen  </span>
+ 27     Color <span class="ST0">color</span>;        <span class="comment">//      the color of shape</span>
+ 28     <span class="keyword-directive">int</span> <span class="ST0">width</span>;          <span class="comment">//      Width of the Sprite</span>
+ 29     <span class="keyword-directive">int</span> <span class="ST0">height</span>;         <span class="comment">//      Height of the Sprite</span>
+ 30     <span class="keyword-directive">int</span> <span class="ST0">x</span>;                      <span class="comment">//      Horizontal coordinate of the center of the sprite</span>
+ 31     <span class="keyword-directive">int</span> <span class="ST0">y</span>;                      <span class="comment">//      Vertical coordinate of the center of the sprite</span>
+ 32     
+ 33     <span class="keyword-directive">public</span> Sprite() {
+ 34         <span class="comment">//      Initialize all the fields</span>
+ 35         <span class="ST0">shape</span>=<span class="keyword-directive">new</span> Polygon();
+ 36         <span class="ST0">width</span>=<span class="number">0</span>;
+ 37         <span class="ST0">height</span>=<span class="number">0</span>;
+ 38         <span class="ST0">x</span>=<span class="number">0</span>;
+ 39         <span class="ST0">y</span>=<span class="number">0</span>;
+ 40         <span class="ST0">color</span>=Color.<span class="ST1">BLACK</span>;
+ 41     }
+ 42     
+ 43     <span class="keyword-directive">public</span> <span class="keyword-directive">void</span> <span class="ST2">render</span>(Graphics g) {
+ 44         <span class="comment">//      The render method is responsible for positioning the sprite at the proper location</span>
+ 45         
+ 46         g.setColor(<span class="ST0">color</span>);
+ 47         
+ 48         Polygon renderedShape=<span class="keyword-directive">new</span> Polygon();
+ 49         <span class="keyword-directive">for</span>(<span class="keyword-directive">int</span> i=<span class="number">0</span>; i&lt;<span class="ST0">shape</span>.<span class="ST0">npoints</span>; i++) {
+ 50             <span class="keyword-directive">int</span> renderedx=<span class="ST0">shape</span>.<span class="ST0">xpoints</span>[i] + <span class="ST0">x</span> + <span class="ST0">width</span> / <span class="number">2</span>;
+ 51             <span class="keyword-directive">int</span> renderedy=<span class="ST0">shape</span>.<span class="ST0">ypoints</span>[i] + <span class="ST0">y</span> + <span class="ST0">height</span> / <span class="number">2</span>;
+ 52             renderedShape.addPoint(renderedx, renderedy);
+ 53         }
+ 54         g.fillPolygon(renderedShape);
+ 55     }
+ 56     
+ 57     <span class="keyword-directive">public</span> <span class="keyword-directive">boolean</span> <span class="ST2">containsPoint</span>(<span class="keyword-directive">int</span> x, <span class="keyword-directive">int</span> y) {
+ 58         <span class="comment">//      This returns true only if the point (x, y) is contained within the visible shape of the sprite</span>
+ 59         
+ 60         <span class="keyword-directive">return</span> <span class="ST0">shape</span>.contains(x - <span class="keyword-directive">this</span>.<span class="ST0">x</span> - <span class="ST0">width</span> /<span class="number">2</span>, y - <span class="keyword-directive">this</span>.<span class="ST0">y</span> - <span class="ST0">height</span> /<span class="number">2</span>);
+ 61     }
+ 62 }
+ 63 
+ 64 <span class="keyword-directive">class</span> ConnectionSprite <span class="keyword-directive">extends</span> Sprite {
+ 65 
+ 66         <span class="comment">/*</span>
+ 67 <span class="comment">         *</span>
+ 68 <span class="comment">         *      ConnectionSprite is a sublcass of Sprite. There are two types of connections: vertical</span>
+ 69 <span class="comment">         *      connections between dots and horizontal connections between sprites. The static method</span>
+ 70 <span class="comment">         *      createConnection is a convenience method to create the ConnectionSprite at the proper</span>
+ 71 <span class="comment">         *      coordinates and build its shape.</span>
+ 72 <span class="comment">         *</span>
+ 73 <span class="comment">         */</span>
+ 74 
+ 75     <span class="keyword-directive">public</span> <span class="keyword-directive">static</span> <span class="keyword-directive">final</span> <span class="keyword-directive">int</span> <span class="ST1">HORZ_CONN</span>=<span class="number">1</span>;
+ 76     <span class="keyword-directive">public</span> <span class="keyword-directive">static</span> <span class="keyword-directive">final</span> <span class="keyword-directive">int</span> <span class="ST1">VERT_CONN</span>=<span class="number">2</span>;
+ 77     
+ 78     <span class="keyword-directive">boolean</span> <span class="ST0">connectionMade</span>;     <span class="comment">// Tracks wether the ConnectionSprite has been clicked on</span>
+ 79     
+ 80     <span class="keyword-directive">public</span> ConnectionSprite() {
+ 81         <span class="comment">// Initialize all the fields</span>
+ 82         <span class="keyword-directive">super</span>();
+ 83         
+ 84         <span class="ST0">connectionMade</span>=<span class="keyword-directive">false</span>;
+ 85         <span class="ST0">color</span>=Color.<span class="ST1">WHITE</span>;
+ 86     }
+ 87     
+ 88     <span class="keyword-directive">public</span> <span class="keyword-directive">static</span> ConnectionSprite <span class="ST3">createConnection</span>(<span class="keyword-directive">int</span> type, <span class="keyword-directive">int</span> x, <span class="keyword-directive">int</span> y) {
+ 89         ConnectionSprite conn=<span class="keyword-directive">new</span> ConnectionSprite();
+ 90         
+ 91         <span class="keyword-directive">if</span>(type==ConnectionSprite.<span class="ST1">HORZ_CONN</span>) {
+ 92                 conn.<span class="ST0">width</span>=Dots.<span class="ST1">DOT_GAP</span>;
+ 93                 conn.<span class="ST0">height</span>=Dots.<span class="ST1">DOT_SIZE</span>;
+ 94         } <span class="keyword-directive">else</span> <span class="keyword-directive">if</span>(type==ConnectionSprite.<span class="ST1">VERT_CONN</span>) {
+ 95                 conn.<span class="ST0">width</span>=Dots.<span class="ST1">DOT_SIZE</span>;
+ 96                 conn.<span class="ST0">height</span>=Dots.<span class="ST1">DOT_GAP</span>;
+ 97         } <span class="keyword-directive">else</span> {
+ 98                 <span class="keyword-directive">return</span> <span class="keyword-directive">null</span>;
+ 99         }
+100         
+101         conn.<span class="ST0">x</span>=x;
+102         conn.<span class="ST0">y</span>=y;
+103         
+104         conn.<span class="ST0">shape</span>.addPoint(-conn.<span class="ST0">width</span>/<span class="number">2</span>, -conn.<span class="ST0">height</span>/<span class="number">2</span>);
+105         conn.<span class="ST0">shape</span>.addPoint(-conn.<span class="ST0">width</span>/<span class="number">2</span>, conn.<span class="ST0">height</span>/<span class="number">2</span>);
+106         conn.<span class="ST0">shape</span>.addPoint(conn.<span class="ST0">width</span>/<span class="number">2</span>, conn.<span class="ST0">height</span>/<span class="number">2</span>);
+107         conn.<span class="ST0">shape</span>.addPoint(conn.<span class="ST0">width</span>/<span class="number">2</span>, -conn.<span class="ST0">height</span>/<span class="number">2</span>);
+108         
+109         <span class="keyword-directive">return</span> conn;
+110     }
+111 }
+112 
+113 <span class="keyword-directive">class</span> BoxSprite <span class="keyword-directive">extends</span> Sprite {
+114 
+115         <span class="comment">/*</span>
+116 <span class="comment">         *</span>
+117 <span class="comment">         *      BoxSprite is a subclass of Sprite. BoxSprites represent the actual boxes made up by the Dot </span>
+118 <span class="comment">         *      Sprites and ConnectionSprites. BoxSprite contains references to the four ConnectionSprites</span>
+119 <span class="comment">         *      which make up its borders. The isBoxed method returns true when all four of the border</span>
+120 <span class="comment">         *      ConnectionSprites have true connectionMade fields. BoxSprites should be created using the</span>
+121 <span class="comment">         *      static createBox method.</span>
+122 <span class="comment">         *</span>
+123 <span class="comment">         */</span>
+124 
+125         ConnectionSprite[] <span class="ST0">horizontalConnections</span>;       <span class="comment">//      The ConnectionSprites that are the top and bottom borders of the box</span>
+126         ConnectionSprite[] <span class="ST0">verticalConnections</span>;         <span class="comment">//      The ConnectionSprites that are the left and right borders of the box</span>
+127 
+128         <span class="keyword-directive">int</span> <span class="ST0">player</span>;     <span class="comment">//      Tracks the player that closed the box</span>
+129 
+130         <span class="keyword-directive">public</span> BoxSprite() {
+131                 <span class="keyword-directive">super</span>();
+132 
+133                 <span class="ST0">color</span>=Color.<span class="ST1">WHITE</span>;      <span class="comment">//      Initially the box should be the same color as the background</span>
+134 
+135                 <span class="ST0">horizontalConnections</span>=<span class="keyword-directive">new</span> ConnectionSprite[<span class="number">2</span>];
+136                 <span class="ST0">verticalConnections</span>=<span class="keyword-directive">new</span> ConnectionSprite[<span class="number">2</span>];
+137 
+138                 <span class="ST0">width</span>=Dots.<span class="ST1">DOT_GAP</span>;
+139                 <span class="ST0">height</span>=Dots.<span class="ST1">DOT_GAP</span>;
+140 
+141                 <span class="ST0">shape</span>.addPoint(-<span class="ST0">width</span>/<span class="number">2</span>, -<span class="ST0">height</span>/<span class="number">2</span>);
+142         <span class="ST0">shape</span>.addPoint(-<span class="ST0">width</span>/<span class="number">2</span>, <span class="ST0">height</span>/<span class="number">2</span>);
+143         <span class="ST0">shape</span>.addPoint(<span class="ST0">width</span>/<span class="number">2</span>, <span class="ST0">height</span>/<span class="number">2</span>);
+144         <span class="ST0">shape</span>.addPoint(<span class="ST0">width</span>/<span class="number">2</span>, -<span class="ST0">height</span>/<span class="number">2</span>);
+145         }       
+146 
+147         <span class="keyword-directive">public</span> <span class="keyword-directive">boolean</span> <span class="ST2">isBoxed</span>() {
+148                 <span class="keyword-directive">boolean</span> boxed=<span class="keyword-directive">true</span>;
+149 
+150                 <span class="keyword-directive">for</span>(<span class="keyword-directive">int</span> i=<span class="number">0</span>; i&lt;<span class="number">2</span>; i++) {
+151                         <span class="keyword-directive">if</span>(!<span class="ST0">horizontalConnections</span>[i].<span class="ST0">connectionMade</span> || !<span class="ST0">verticalConnections</span>[i].<span class="ST0">connectionMade</span>) {
+152                                 boxed=<span class="keyword-directive">false</span>;
+153                         }
+154                 }
+155 
+156                 <span class="keyword-directive">return</span> boxed;
+157         }
+158 
+159         <span class="keyword-directive">public</span> <span class="keyword-directive">static</span> BoxSprite <span class="ST3">createBox</span>(<span class="keyword-directive">int</span> x, <span class="keyword-directive">int</span> y, ConnectionSprite[] horizontalConnections, ConnectionSprite[] verticalConnections) {
+160                 BoxSprite box=<span class="keyword-directive">new</span> BoxSprite();
+161                 box.<span class="ST0">player</span>=<span class="number">0</span>;
+162                 box.<span class="ST0">x</span>=x;
+163                 box.<span class="ST0">y</span>=y;
+164                 box.<span class="ST0">horizontalConnections</span>=horizontalConnections;
+165                 box.<span class="ST0">verticalConnections</span>=verticalConnections;
+166                 <span class="keyword-directive">return</span> box;
+167         }
+168 }
+169 
+170 <span class="keyword-directive">public</span> <span class="keyword-directive">class</span> Dots <span class="keyword-directive">extends</span> JFrame <span class="keyword-directive">implements</span> MouseMotionListener, MouseListener {
+171     
+172     <span class="keyword-directive">public</span> <span class="keyword-directive">static</span> <span class="keyword-directive">final</span> <span class="keyword-directive">int</span> <span class="ST1">DOT_NUMBER</span>=<span class="number">15</span>;      <span class="comment">//      The number of dots on each side of the square game board</span>
+173     <span class="keyword-directive">public</span> <span class="keyword-directive">static</span> <span class="keyword-directive">final</span> <span class="keyword-directive">int</span> <span class="ST1">DOT_GAP</span>=<span class="number">24</span>;         <span class="comment">//      The space between each dot                                      </span>
+174     <span class="keyword-directive">public</span> <span class="keyword-directive">static</span> <span class="keyword-directive">final</span> <span class="keyword-directive">int</span> <span class="ST1">DOT_SIZE</span>=<span class="number">4</span>;         <span class="comment">//      The length of the sides of the square dot</span>
+175     
+176     <span class="keyword-directive">public</span> <span class="keyword-directive">static</span> <span class="keyword-directive">final</span> <span class="keyword-directive">int</span> <span class="ST1">PLAYER_ONE</span>=<span class="number">1</span>;
+177     <span class="keyword-directive">public</span> <span class="keyword-directive">static</span> <span class="keyword-directive">final</span> <span class="keyword-directive">int</span> <span class="ST1">PLAYER_TWO</span>=<span class="number">2</span>;
+178     
+179     <span class="keyword-directive">public</span> <span class="keyword-directive">static</span> <span class="keyword-directive">final</span> Color <span class="ST1">PLAYER_ONE_COLOR</span>=Color.<span class="ST1">ORANGE</span>;    <span class="comment">//      The color of player1&#39;s boxes</span>
+180     <span class="keyword-directive">public</span> <span class="keyword-directive">static</span> <span class="keyword-directive">final</span> Color <span class="ST1">PLAYER_TWO_COLOR</span>=Color.<span class="ST1">GREEN</span>;             <span class="comment">//      The color of player2&#39;s boxes</span>
+181     
+182     <span class="keyword-directive">private</span> ConnectionSprite[] <span class="ST0">horizontalConnections</span>;   <span class="comment">//      Array for all the ConnectionSprites that horizontally connect dots</span>
+183     <span class="keyword-directive">private</span> ConnectionSprite[] <span class="ST0">verticalConnections</span>;             <span class="comment">//      Array for all the ConnectionSprites that vertically connect dots</span>
+184     <span class="keyword-directive">private</span> BoxSprite[] <span class="ST0">boxes</span>;  <span class="comment">//      Array for all the BoxSprites</span>
+185     <span class="keyword-directive">private</span> Sprite[] <span class="ST0">dots</span>;              <span class="comment">//      Array for all the dots</span>
+186     
+187     <span class="keyword-directive">private</span> Dimension <span class="ST0">dim</span>;              <span class="comment">//      Window dimensions</span>
+188     
+189     <span class="keyword-directive">private</span> <span class="keyword-directive">int</span> <span class="ST0">clickx</span>;         <span class="comment">//      Holds the x coordinate of mouse click</span>
+190     <span class="keyword-directive">private</span> <span class="keyword-directive">int</span> <span class="ST0">clicky</span>;         <span class="comment">//      Holds the y coordinate of mouse click</span>
+191     
+192     <span class="keyword-directive">private</span> <span class="keyword-directive">int</span> <span class="ST0">mousex</span>;         <span class="comment">//      Holds the x coordinate of the mouse location</span>
+193     <span class="keyword-directive">private</span> <span class="keyword-directive">int</span> <span class="ST0">mousey</span>;         <span class="comment">//      Holds the y coordinate of the mouse location</span>
+194         
+195     <span class="keyword-directive">private</span> <span class="keyword-directive">int</span> <span class="ST0">centerx</span>;        <span class="comment">//      x coordinate of the center of the gameboard</span>
+196     <span class="keyword-directive">private</span> <span class="keyword-directive">int</span> <span class="ST0">centery</span>;        <span class="comment">//      y coordinate of the center of the gameborad </span>
+197         
+198     <span class="keyword-directive">private</span> <span class="keyword-directive">int</span> <span class="ST0">side</span>;   <span class="comment">//      Length of the sides of the square gameboard</span>
+199     <span class="keyword-directive">private</span> <span class="keyword-directive">int</span> <span class="ST0">space</span>;  <span class="comment">// Length of 1 dot + 1 connection</span>
+200         
+201     <span class="keyword-directive">private</span> <span class="keyword-directive">int</span> <span class="ST0">activePlayer</span>;   <span class="comment">//      Holds the current player</span>
+202 
+203     <span class="keyword-directive">public</span> Dots() {
+204         <span class="keyword-directive">super</span>(<span class="character">&quot;</span><span class="character">Connect the Dots</span><span class="character">&quot;</span>);
+205         setSize(<span class="number">400</span>, <span class="number">400</span>);
+206         setResizable(<span class="keyword-directive">false</span>);
+207         setDefaultCloseOperation(JFrame.<span class="ST1">EXIT_ON_CLOSE</span>);
+208         addMouseListener(<span class="keyword-directive">this</span>);
+209         addMouseMotionListener(<span class="keyword-directive">this</span>);
+210         
+211         loadProperties();
+212         loadDots();
+213         
+214         startNewGame();
+215         
+216         setVisible(<span class="keyword-directive">true</span>);
+217     }
+218     
+219     <span class="keyword-directive">private</span> <span class="keyword-directive">void</span> <span class="ST2">loadProperties</span>() {
+220         <span class="comment">//      Initialize fields</span>
+221         
+222         <span class="ST0">clickx</span>=<span class="number">0</span>;
+223         <span class="ST0">clicky</span>=<span class="number">0</span>;
+224         <span class="ST0">mousex</span>=<span class="number">0</span>;
+225         <span class="ST0">mousey</span>=<span class="number">0</span>;
+226         
+227         <span class="ST0">dim</span>=getSize();
+228         <span class="ST0">centerx</span>=<span class="ST0">dim</span>.<span class="ST0">width</span>/<span class="number">2</span>;
+229         <span class="ST0">centery</span>=(<span class="ST0">dim</span>.<span class="ST0">height</span> - <span class="number">100</span>) /<span class="number">2</span>;
+230         
+231         <span class="ST0">side</span>=<span class="ST1">DOT_NUMBER</span> * <span class="ST1">DOT_SIZE</span> + (<span class="ST1">DOT_NUMBER</span> - <span class="number">1</span>) * <span class="ST1">DOT_GAP</span>;        <span class="comment">//      There is one less connection than dot per side</span>
+232         <span class="ST0">space</span>=<span class="ST1">DOT_SIZE</span> + <span class="ST1">DOT_GAP</span>;
+233     }
+234     
+235     <span class="keyword-directive">private</span> <span class="keyword-directive">void</span> <span class="ST2">loadConnections</span>() {
+236         
+237         <span class="ST0">horizontalConnections</span>=<span class="keyword-directive">new</span> ConnectionSprite[(<span class="ST1">DOT_NUMBER</span>-<span class="number">1</span>) * <span class="ST1">DOT_NUMBER</span>];
+238         <span class="ST0">verticalConnections</span>=<span class="keyword-directive">new</span> ConnectionSprite[(<span class="ST1">DOT_NUMBER</span>-<span class="number">1</span>) * <span class="ST1">DOT_NUMBER</span>];
+239         
+240         <span class="comment">/*</span>
+241 <span class="comment">         *</span>
+242 <span class="comment">         *      There are two ways to cycle through the Connections, Boxes, and Dots grids. This way uses only 1 for</span>
+243 <span class="comment">         *      loop and keeps track of the current row and column number in colsx, rowsx, colsy, rowsy. colsx and rowsx</span>
+244 <span class="comment">         *      track the columns and rows for the horizontalConnections while colsy and rowsy track the columns and</span>
+245 <span class="comment">         *      rows for the vertical connections. The reason to have different fields for vertical and horizontal</span>
+246 <span class="comment">         *      connections is so that both grids will be filled in left to right and then top to bottom (rows first</span>
+247 <span class="comment">         *      then columns). This makes it easier to match the connection up to box or boxes it borders. Simple setting </span>
+248 <span class="comment">         *      colsy=rowsx and rowsy=colsx will put the vertical connections on the correct place on the screen </span>
+249 <span class="comment">         *      but they won&#39;t match up to the boxes correctly.</span>
+250 <span class="comment">         *</span>
+251 <span class="comment">         */</span>
+252 
+253         
+254         <span class="keyword-directive">for</span>(<span class="keyword-directive">int</span> i=<span class="number">0</span>; i&lt;<span class="ST0">horizontalConnections</span>.<span class="ST0">length</span>; i++) {
+255                 <span class="keyword-directive">int</span> colsx=i % (<span class="ST1">DOT_NUMBER</span>-<span class="number">1</span>);
+256                 <span class="keyword-directive">int</span> rowsx=i / (<span class="ST1">DOT_NUMBER</span>-<span class="number">1</span>);
+257                 <span class="keyword-directive">int</span> horx=<span class="ST0">centerx</span> - <span class="ST0">side</span> / <span class="number">2</span> + <span class="ST1">DOT_SIZE</span> + colsx * <span class="ST0">space</span>;
+258                 <span class="keyword-directive">int</span> hory=<span class="ST0">centery</span> - <span class="ST0">side</span> / <span class="number">2</span> + rowsx * <span class="ST0">space</span>;
+259                 <span class="ST0">horizontalConnections</span>[i]=ConnectionSprite.<span class="ST4">createConnection</span>(ConnectionSprite.<span class="ST1">HORZ_CONN</span>, horx, hory);
+260                 
+261                 <span class="keyword-directive">int</span> colsy=i % <span class="ST1">DOT_NUMBER</span>;
+262                 <span class="keyword-directive">int</span> rowsy=i / <span class="ST1">DOT_NUMBER</span>;
+263                 <span class="keyword-directive">int</span> vertx=<span class="ST0">centerx</span> - <span class="ST0">side</span> / <span class="number">2</span> + colsy * <span class="ST0">space</span>;
+264                 <span class="keyword-directive">int</span> verty=<span class="ST0">centery</span> - <span class="ST0">side</span> / <span class="number">2</span> + <span class="ST1">DOT_SIZE</span> + rowsy * <span class="ST0">space</span>;
+265                 <span class="ST0">verticalConnections</span>[i]=ConnectionSprite.<span class="ST4">createConnection</span>(ConnectionSprite.<span class="ST1">VERT_CONN</span>, vertx, verty);
+266         }
+267     } 
+268         
+269     <span class="keyword-directive">private</span> <span class="keyword-directive">void</span> <span class="ST2">loadBoxes</span>() {
+270         
+271         <span class="comment">/*</span>
+272 <span class="comment">         *</span>
+273 <span class="comment">         *      loadBoxes cycles through the box grid the way loadConnection does. There is oneless box per side</span>
+274 <span class="comment">         *      than dot per side.</span>
+275 <span class="comment">         *</span>
+276 <span class="comment">         */</span>
+277         
+278         <span class="ST0">boxes</span>=<span class="keyword-directive">new</span> BoxSprite[(<span class="ST1">DOT_NUMBER</span>-<span class="number">1</span>) * (<span class="ST1">DOT_NUMBER</span>-<span class="number">1</span>)];
+279         
+280         <span class="keyword-directive">for</span>(<span class="keyword-directive">int</span> i=<span class="number">0</span>; i&lt;<span class="ST0">boxes</span>.<span class="ST0">length</span>; i++) {
+281                 <span class="keyword-directive">int</span> cols=i % (<span class="ST1">DOT_NUMBER</span>-<span class="number">1</span>);
+282                 <span class="keyword-directive">int</span> rows=i / (<span class="ST1">DOT_NUMBER</span>-<span class="number">1</span>);
+283                 
+284                 <span class="keyword-directive">int</span> boxx=<span class="ST0">centerx</span> - <span class="ST0">side</span> / <span class="number">2</span> + <span class="ST1">DOT_SIZE</span> + cols * <span class="ST0">space</span>;
+285                 <span class="keyword-directive">int</span> boxy=<span class="ST0">centery</span> - <span class="ST0">side</span> / <span class="number">2</span> + <span class="ST1">DOT_SIZE</span> + rows * <span class="ST0">space</span>;
+286                 
+287                 ConnectionSprite[] horConn=<span class="keyword-directive">new</span> ConnectionSprite[<span class="number">2</span>];
+288                 horConn[<span class="number">0</span>]=<span class="ST0">horizontalConnections</span>[i];
+289                 horConn[<span class="number">1</span>]=<span class="ST0">horizontalConnections</span>[i + (<span class="ST1">DOT_NUMBER</span> - <span class="number">1</span>)];
+290                 
+291                 ConnectionSprite[] verConn=<span class="keyword-directive">new</span> ConnectionSprite[<span class="number">2</span>];             <span class="comment">//      This only works if the verticalConnections were put into the array rows then columns</span>
+292                 verConn[<span class="number">0</span>]=<span class="ST0">verticalConnections</span>[i + rows];
+293                 verConn[<span class="number">1</span>]=<span class="ST0">verticalConnections</span>[i + rows + <span class="number">1</span>];           
+294                 
+295                 <span class="ST0">boxes</span>[i]=BoxSprite.<span class="ST4">createBox</span>(boxx, boxy, horConn, verConn);
+296         }
+297     }
+298     
+299     <span class="keyword-directive">private</span> <span class="keyword-directive">void</span> <span class="ST2">loadDots</span>() {
+300 
+301                 <span class="comment">/*</span>
+302 <span class="comment">                 *</span>
+303 <span class="comment">                 *      loadDots cycles through the dot grid differently than the loadConnections and loadBoxes methods</span>
+304 <span class="comment">                 *      cycle through the connections and boxes grids. The loadDots cycles through the dot grid with two</span>
+305 <span class="comment">                 *      for loops. It doesn&#39;t matter what order the dots are loaded into the dots array since they are for</span>
+306 <span class="comment">                 *      visual purposes only. The body of the loop also contains the code to actually build the dots shape.</span>
+307 <span class="comment">                 *</span>
+308 <span class="comment">                 */</span>
+309 
+310         <span class="ST0">dots</span>=<span class="keyword-directive">new</span> Sprite[<span class="ST1">DOT_NUMBER</span> * <span class="ST1">DOT_NUMBER</span>];
+311         <span class="keyword-directive">for</span>(<span class="keyword-directive">int</span> rows=<span class="number">0</span>; rows&lt;<span class="ST1">DOT_NUMBER</span>; rows++) {
+312             <span class="keyword-directive">for</span>(<span class="keyword-directive">int</span> cols=<span class="number">0</span>; cols&lt;<span class="ST1">DOT_NUMBER</span>; cols++) {
+313                 Sprite dot=<span class="keyword-directive">new</span> Sprite();
+314                 dot.<span class="ST0">width</span>=<span class="ST1">DOT_SIZE</span>;
+315                 dot.<span class="ST0">height</span>=<span class="ST1">DOT_SIZE</span>;
+316                 dot.<span class="ST0">x</span>=<span class="ST0">centerx</span> - <span class="ST0">side</span>/<span class="number">2</span> + cols * <span class="ST0">space</span>;
+317                 dot.<span class="ST0">y</span>=<span class="ST0">centery</span> - <span class="ST0">side</span>/<span class="number">2</span> + rows * <span class="ST0">space</span>;
+318                 dot.<span class="ST0">shape</span>.addPoint(-<span class="ST1">DOT_SIZE</span>/<span class="number">2</span>, -<span class="ST1">DOT_SIZE</span>/<span class="number">2</span>);
+319                 dot.<span class="ST0">shape</span>.addPoint(-<span class="ST1">DOT_SIZE</span>/<span class="number">2</span>, <span class="ST1">DOT_SIZE</span>/<span class="number">2</span>);
+320                 dot.<span class="ST0">shape</span>.addPoint(<span class="ST1">DOT_SIZE</span>/<span class="number">2</span>, <span class="ST1">DOT_SIZE</span>/<span class="number">2</span>);
+321                 dot.<span class="ST0">shape</span>.addPoint(<span class="ST1">DOT_SIZE</span>/<span class="number">2</span>, -<span class="ST1">DOT_SIZE</span>/<span class="number">2</span>);
+322                 <span class="keyword-directive">int</span> index=rows * <span class="ST1">DOT_NUMBER</span> + cols;
+323                 <span class="ST0">dots</span>[index]=dot;
+324             }
+325         }
+326     }
+327     
+328     <span class="keyword-directive">private</span> <span class="keyword-directive">void</span> <span class="ST2">startNewGame</span>() {
+329         <span class="ST0">activePlayer</span>=<span class="ST1">PLAYER_ONE</span>;
+330         loadConnections();
+331         loadBoxes();
+332     }
+333     
+334     <span class="keyword-directive">private</span> ConnectionSprite <span class="ST2">getConnection</span>(<span class="keyword-directive">int</span> x, <span class="keyword-directive">int</span> y) {
+335         
+336         <span class="comment">// Get the connection that encloses point (x, y) or return null if there isn&#39;t one</span>
+337         
+338         <span class="keyword-directive">for</span>(<span class="keyword-directive">int</span> i=<span class="number">0</span>; i&lt;<span class="ST0">horizontalConnections</span>.<span class="ST0">length</span>; i++) {
+339                 <span class="keyword-directive">if</span>(<span class="ST0">horizontalConnections</span>[i].containsPoint(x, y)) {
+340                         <span class="keyword-directive">return</span> <span class="ST0">horizontalConnections</span>[i];                        
+341                 }
+342         }
+343         
+344         <span class="keyword-directive">for</span>(<span class="keyword-directive">int</span> i=<span class="number">0</span>; i&lt;<span class="ST0">verticalConnections</span>.<span class="ST0">length</span>; i++) {
+345                 <span class="keyword-directive">if</span>(<span class="ST0">verticalConnections</span>[i].containsPoint(x, y)) {
+346                         <span class="keyword-directive">return</span> <span class="ST0">verticalConnections</span>[i];
+347                 }
+348         }
+349         
+350         <span class="keyword-directive">return</span> <span class="keyword-directive">null</span>;
+351     }
+352     
+353     <span class="keyword-directive">private</span> <span class="keyword-directive">boolean</span>[] <span class="ST2">getBoxStatus</span>() {
+354         <span class="keyword-directive">boolean</span>[] status=<span class="keyword-directive">new</span> <span class="keyword-directive">boolean</span>[<span class="ST0">boxes</span>.<span class="ST0">length</span>];
+355         
+356         <span class="keyword-directive">for</span>(<span class="keyword-directive">int</span> i=<span class="number">0</span>; i&lt;status.<span class="ST0">length</span>; i++) {
+357                 status[i]=<span class="ST0">boxes</span>[i].isBoxed();
+358         }
+359         
+360         <span class="keyword-directive">return</span> status;
+361     }
+362     
+363     <span class="keyword-directive">private</span> <span class="keyword-directive">int</span>[] <span class="ST2">calculateScores</span>() {
+364         <span class="keyword-directive">int</span>[] scores={<span class="number">0</span>, <span class="number">0</span>};
+365         
+366         <span class="keyword-directive">for</span>(<span class="keyword-directive">int</span> i=<span class="number">0</span>; i&lt;<span class="ST0">boxes</span>.<span class="ST0">length</span>; i++) {
+367                 <span class="keyword-directive">if</span>(<span class="ST0">boxes</span>[i].isBoxed() &amp;&amp; <span class="ST0">boxes</span>[i].<span class="ST0">player</span>!=<span class="number">0</span>) {
+368                         scores[<span class="ST0">boxes</span>[i].<span class="ST0">player</span> - <span class="number">1</span>]++;
+369                 }
+370         }
+371         
+372         <span class="keyword-directive">return</span> scores;
+373     }
+374     
+375     <span class="keyword-directive">private</span> <span class="keyword-directive">boolean</span> <span class="ST2">makeConnection</span>(ConnectionSprite connection) {
+376         <span class="keyword-directive">boolean</span> newBox=<span class="keyword-directive">false</span>;
+377         
+378         <span class="keyword-directive">boolean</span>[] boxStatusBeforeConnection=getBoxStatus();     <span class="comment">//      The two boolean arrays are used to see if a new box was created after the connection was made</span>
+379         
+380         connection.<span class="ST0">connectionMade</span>=<span class="keyword-directive">true</span>;
+381         
+382         <span class="keyword-directive">boolean</span>[] boxStatusAfterConnection=getBoxStatus();
+383         
+384         <span class="keyword-directive">for</span>(<span class="keyword-directive">int</span> i=<span class="number">0</span>; i&lt;<span class="ST0">boxes</span>.<span class="ST0">length</span>; i++) {
+385                 <span class="keyword-directive">if</span>(boxStatusAfterConnection[i]!=boxStatusBeforeConnection[i]) {
+386                         newBox=<span class="keyword-directive">true</span>;
+387                         <span class="ST0">boxes</span>[i].<span class="ST0">player</span>=<span class="ST0">activePlayer</span>;
+388                 }
+389         }
+390         
+391         <span class="keyword-directive">if</span>(!newBox) {   <span class="comment">//      Allow the current player to go again if he made a box</span>
+392                 <span class="keyword-directive">if</span>(<span class="ST0">activePlayer</span>==<span class="ST1">PLAYER_ONE</span>)
+393                         <span class="ST0">activePlayer</span>=<span class="ST1">PLAYER_TWO</span>;
+394                 <span class="keyword-directive">else</span>
+395                         <span class="ST0">activePlayer</span>=<span class="ST1">PLAYER_ONE</span>;
+396         }       
+397         
+398         checkForGameOver();
+399         
+400         <span class="keyword-directive">return</span> newBox;
+401     }
+402     
+403     <span class="keyword-directive">private</span> <span class="keyword-directive">void</span> <span class="ST2">checkForGameOver</span>() {
+404         <span class="keyword-directive">int</span>[] scores=calculateScores();
+405         <span class="keyword-directive">if</span>((scores[<span class="number">0</span>] + scores[<span class="number">1</span>])==((<span class="ST1">DOT_NUMBER</span> - <span class="number">1</span>) * (<span class="ST1">DOT_NUMBER</span> - <span class="number">1</span>))) {
+406                 JOptionPane.<span class="ST4">showMessageDialog</span>(<span class="keyword-directive">this</span>, <span class="character">&quot;</span><span class="character">Player1: </span><span class="character">&quot;</span> + scores[<span class="number">0</span>] + <span class="character">&quot;</span><span class="keyword-directive">\n</span><span class="character">Player2: </span><span class="character">&quot;</span> + scores[<span class="number">1</span>], <span class="character">&quot;</span><span class="character">Game Over</span><span class="character">&quot;</span>, JOptionPane.<span class="ST1">PLAIN_MESSAGE</span>);
+407                 startNewGame();
+408                 repaint();
+409         }
+410     }
+411     
+412     <span class="keyword-directive">private</span> <span class="keyword-directive">void</span> <span class="ST2">handleClick</span>() {
+413         ConnectionSprite connection=getConnection(<span class="ST0">clickx</span>, <span class="ST0">clicky</span>);
+414         <span class="keyword-directive">if</span>(connection==<span class="keyword-directive">null</span>)
+415                 <span class="keyword-directive">return</span>;
+416         
+417         <span class="keyword-directive">if</span>(!connection.<span class="ST0">connectionMade</span>) {
+418                 makeConnection(connection);
+419                 
+420         }               
+421         
+422         repaint();
+423     }
+424     
+425     <span class="keyword-directive">public</span> <span class="keyword-directive">void</span> <span class="ST2">mouseMoved</span>(MouseEvent event) {
+426         <span class="ST0">mousex</span>=event.getX();
+427         <span class="ST0">mousey</span>=event.getY();
+428         repaint();
+429     }
+430     
+431     <span class="keyword-directive">public</span> <span class="keyword-directive">void</span> <span class="ST2">mouseDragged</span>(MouseEvent event) {
+432         mouseMoved(event);
+433     }
+434     
+435     <span class="keyword-directive">public</span> <span class="keyword-directive">void</span> <span class="ST2">mouseClicked</span>(MouseEvent event) {
+436         <span class="ST0">clickx</span>=event.getX();
+437         <span class="ST0">clicky</span>=event.getY();
+438         
+439         handleClick();
+440     }
+441     
+442     <span class="keyword-directive">public</span> <span class="keyword-directive">void</span> <span class="ST2">mouseEntered</span>(MouseEvent event) {        
+443     }
+444     
+445     <span class="keyword-directive">public</span> <span class="keyword-directive">void</span> <span class="ST2">mouseExited</span>(MouseEvent event) { 
+446     }
+447     
+448     <span class="keyword-directive">public</span> <span class="keyword-directive">void</span> <span class="ST2">mousePressed</span>(MouseEvent event) {
+449     }
+450     
+451     <span class="keyword-directive">public</span> <span class="keyword-directive">void</span> <span class="ST2">mouseReleased</span>(MouseEvent event) {
+452     }
+453     
+454     <span class="keyword-directive">private</span> <span class="keyword-directive">void</span> <span class="ST2">paintBackground</span>(Graphics g) {
+455         g.setColor(Color.<span class="ST1">WHITE</span>);
+456         g.fillRect(<span class="number">0</span>, <span class="number">0</span>, <span class="ST0">dim</span>.<span class="ST0">width</span>, <span class="ST0">dim</span>.<span class="ST0">height</span>);
+457     }
+458     
+459     <span class="keyword-directive">private</span> <span class="keyword-directive">void</span> <span class="ST2">paintDots</span>(Graphics g) {
+460         <span class="keyword-directive">for</span>(<span class="keyword-directive">int</span> i=<span class="number">0</span>; i&lt;<span class="ST0">dots</span>.<span class="ST0">length</span>; i++) {
+461                 <span class="ST0">dots</span>[i].render(g);
+462         }
+463     }
+464     
+465     <span class="keyword-directive">private</span> <span class="keyword-directive">void</span> <span class="ST2">paintConnections</span>(Graphics g) {
+466         <span class="keyword-directive">for</span>(<span class="keyword-directive">int</span> i=<span class="number">0</span>; i&lt;<span class="ST0">horizontalConnections</span>.<span class="ST0">length</span>; i++) {
+467                 
+468                 <span class="keyword-directive">if</span>(!<span class="ST0">horizontalConnections</span>[i].<span class="ST0">connectionMade</span>) {
+469                         <span class="keyword-directive">if</span>(<span class="ST0">horizontalConnections</span>[i].containsPoint(<span class="ST0">mousex</span>, <span class="ST0">mousey</span>)) {
+470                                 <span class="ST0">horizontalConnections</span>[i].<span class="ST0">color</span>=Color.<span class="ST1">RED</span>;
+471                         } <span class="keyword-directive">else</span> {
+472                                 <span class="ST0">horizontalConnections</span>[i].<span class="ST0">color</span>=Color.<span class="ST1">WHITE</span>;
+473                         }
+474                 } <span class="keyword-directive">else</span> {
+475                         <span class="ST0">horizontalConnections</span>[i].<span class="ST0">color</span>=Color.<span class="ST1">BLUE</span>;
+476                 }
+477                 
+478                 <span class="ST0">horizontalConnections</span>[i].render(g);
+479         }
+480         
+481         <span class="keyword-directive">for</span>(<span class="keyword-directive">int</span> i=<span class="number">0</span>; i&lt;<span class="ST0">verticalConnections</span>.<span class="ST0">length</span>; i++) {
+482                 
+483                 <span class="keyword-directive">if</span>(!<span class="ST0">verticalConnections</span>[i].<span class="ST0">connectionMade</span>) {
+484                         <span class="keyword-directive">if</span>(<span class="ST0">verticalConnections</span>[i].containsPoint(<span class="ST0">mousex</span>, <span class="ST0">mousey</span>)) {
+485                                 <span class="ST0">verticalConnections</span>[i].<span class="ST0">color</span>=Color.<span class="ST1">RED</span>;
+486                         } <span class="keyword-directive">else</span> {
+487                                 <span class="ST0">verticalConnections</span>[i].<span class="ST0">color</span>=Color.<span class="ST1">WHITE</span>;
+488                         }
+489                 } <span class="keyword-directive">else</span> {
+490                         <span class="ST0">verticalConnections</span>[i].<span class="ST0">color</span>=Color.<span class="ST1">BLUE</span>;
+491                 }
+492                 
+493                 <span class="ST0">verticalConnections</span>[i].render(g);
+494         }
+495     }
+496     
+497     <span class="keyword-directive">public</span> <span class="keyword-directive">void</span> <span class="ST2">paintBoxes</span>(Graphics g) {
+498         <span class="keyword-directive">for</span>(<span class="keyword-directive">int</span> i=<span class="number">0</span>; i&lt;<span class="ST0">boxes</span>.<span class="ST0">length</span>; i++) {
+499                 <span class="keyword-directive">if</span>(<span class="ST0">boxes</span>[i].isBoxed()) {
+500                         <span class="keyword-directive">if</span>(<span class="ST0">boxes</span>[i].<span class="ST0">player</span>==<span class="ST1">PLAYER_ONE</span>) {
+501                                 <span class="ST0">boxes</span>[i].<span class="ST0">color</span>=<span class="ST1">PLAYER_ONE_COLOR</span>;
+502                         } <span class="keyword-directive">else</span> <span class="keyword-directive">if</span>(<span class="ST0">boxes</span>[i].<span class="ST0">player</span>==<span class="ST1">PLAYER_TWO</span>) {
+503                                 <span class="ST0">boxes</span>[i].<span class="ST0">color</span>=<span class="ST1">PLAYER_TWO_COLOR</span>;
+504                         }
+505                 } <span class="keyword-directive">else</span> {
+506                         <span class="ST0">boxes</span>[i].<span class="ST0">color</span>=Color.<span class="ST1">WHITE</span>;
+507                 }
+508                 
+509                 <span class="ST0">boxes</span>[i].render(g);
+510         }
+511     }
+512     
+513     <span class="keyword-directive">public</span> <span class="keyword-directive">void</span> <span class="ST2">paintStatus</span>(Graphics g) {
+514         <span class="keyword-directive">int</span>[] scores=calculateScores();
+515         String status=<span class="character">&quot;</span><span class="character">It is player</span><span class="character">&quot;</span> + <span class="ST0">activePlayer</span> + <span class="character">&quot;</span><span class="character">&#39;s turn</span><span class="character">&quot;</span>;
+516         String status2=<span class="character">&quot;</span><span class="character">Player 1: </span><span class="character">&quot;</span> + scores[<span class="number">0</span>];
+517         String status3=<span class="character">&quot;</span><span class="character">Player 2: </span><span class="character">&quot;</span> + scores[<span class="number">1</span>];
+518         
+519         <span class="comment">//Color currentColor=(activePlayer==PLAYER_ONE) ? PLAYER_ONE_COLOR : PLAYER_TWO_COLOR ;</span>
+520         <span class="comment">//g.setColor(currentColor);</span>
+521         g.setColor(Color.<span class="ST1">BLACK</span>);
+522         g.drawString(status, <span class="number">10</span>, <span class="ST0">dim</span>.<span class="ST0">height</span>-<span class="number">50</span>);
+523         
+524         g.setColor(<span class="ST1">PLAYER_ONE_COLOR</span>);
+525         g.drawString(status2, <span class="number">10</span>, <span class="ST0">dim</span>.<span class="ST0">height</span>-<span class="number">35</span>);
+526         
+527         g.setColor(<span class="ST1">PLAYER_TWO_COLOR</span>);
+528         g.drawString(status3, <span class="number">10</span>, <span class="ST0">dim</span>.<span class="ST0">height</span>-<span class="number">20</span>);
+529     }
+530     
+531     <span class="keyword-directive">public</span> <span class="keyword-directive">void</span> <span class="ST2">update</span>(Graphics g) {
+532         paint(g);
+533     }
+534     
+535     <span class="keyword-directive">public</span> <span class="keyword-directive">void</span> <span class="ST2">paint</span>(Graphics g) {
+536         <span class="comment">//      The double buffer technique is not really necessarry because there is no animation</span>
+537         
+538         Image bufferImage=createImage(<span class="ST0">dim</span>.<span class="ST0">width</span>, <span class="ST0">dim</span>.<span class="ST0">height</span>);
+539         Graphics bufferGraphics=bufferImage.getGraphics();
+540         
+541         paintBackground(bufferGraphics);        
+542         paintDots(bufferGraphics);      
+543         paintConnections(bufferGraphics);
+544         paintBoxes(bufferGraphics);
+545         paintStatus(bufferGraphics);
+546         
+547         g.drawImage(bufferImage, <span class="number">0</span>, <span class="number">0</span>, <span class="keyword-directive">null</span>);
+548     }
+549     
+550     <span class="keyword-directive">public</span> <span class="keyword-directive">static</span> <span class="keyword-directive">void</span> <span class="ST3">main</span>(String[] args) {
+551         <span class="keyword-directive">new</span> Dots();
+552     }
+553 }
+</pre></body>
+</html>
